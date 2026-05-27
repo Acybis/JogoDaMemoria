@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Memória - Fonoaudiologia PUC</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Jogo da Memória</h1>
+            <div class="info-card">
+                <h2>NPV- Núcleos de Prevenção à Violencia</h2>
+                <p>Encontre o par correspondente entre a pergunta e a resposta.</p>
+            </div>
+            <div class="stats">
+                <p>Tentativas: <span id="moves">0</span></p>
+                <button id="restart-btn" class="btn">Reiniciar Jogo</button>
+            </div>
+        </header>
+
+        <main class="game-board" id="game-board">
+            <!-- As cartas serão geradas dinamicamente pelo JavaScript -->
+        </main>
+
+        <footer class="site-footer">
+            <p><strong>Projeto de Extensão</strong></p>
+            <p><strong>Disciplina:</strong> Estudos Interdisciplinares no Campo da Saúde: Atenção Básica</p>
+            <p><strong>Desenvolvido por:</strong> Aline Araujo, Fernanda Góis, Julia Carvalho, Julia Folego</p>
+            <p><strong>Orientado por:</strong> Luiz Augusto de Paula Souza</p>
+        </footer>
+    </div>
+
+    <div id="win-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Parabéns! Você completou! 🎉</h2>
+            <p>Você revisou os conceitos em <span id="final-moves"></span> tentativas.</p>
+            <button id="play-again-btn" class="btn">Jogar Novamente</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
