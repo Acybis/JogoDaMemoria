@@ -4,12 +4,19 @@ const restartBtn = document.getElementById('restart-btn');
 const winModal = document.getElementById('win-modal');
 const finalMovesDisplay = document.getElementById('final-moves');
 const playAgainBtn = document.getElementById('play-again-btn');
+const rulesModal = document.getElementById('rules-modal');
+const startGameBtn = document.getElementById('start-game-btn');
+
+// Fechar regras e começar o jogo
+startGameBtn.addEventListener('click', () => {
+    rulesModal.classList.add('hidden');
+});
 
 // Pares de Pergunta (Azul) e Resposta (Amarela)
 // Focados no conteúdo de NPV
 const fonoData = [
     { id: 1, text: "Você sabe o que é o NPV?", type: "question" },
-    { id: 1, text: "A sigla NPV significa Núcleo de Prevenção à Violência. Dispositivos voltados à proteção e ao acolhimento dos usuários e trabalhadores do território.", type: "answer" },
+    { id: 1, text: "A sigla NPV significa Núcleo de Prevenção à Violência. Os NPVs são dispositivos que a Secretaria Municipal da Saúde dispõe voltados à proteção e ao acolhimento dos usuários e trabalhadores do território, que vivenciem alguma situação de vulnerabilidade.", type: "answer" },
     
     { id: 2, text: "Qual o objetivo do NPV?", type: "question" },
     { id: 2, text: "Enfrentar situações de violência, principalmente por meio de ações preventivas, especialmente contra mulheres, crianças e pessoas idosas em situação de vulnerabilidade.", type: "answer" },
@@ -45,8 +52,16 @@ function initGame() {
     firstCard = null;
     secondCard = null;
 
-    // Embaralhar cartas
-    cards = [...fonoData].sort(() => Math.random() - 0.5);
+    // Separar perguntas e respostas, e embaralhar cada grupo independentemente
+    const questions = fonoData.filter(card => card.type === 'question').sort(() => Math.random() - 0.5);
+    const answers = fonoData.filter(card => card.type === 'answer').sort(() => Math.random() - 0.5);
+
+    // Intercalar para que as Perguntas fiquem na coluna 1 e as Respostas na coluna 2
+    cards = [];
+    for (let i = 0; i < questions.length; i++) {
+        cards.push(questions[i]);
+        cards.push(answers[i]);
+    }
 
     // Criar elementos no DOM
     cards.forEach(cardData => {
@@ -71,10 +86,37 @@ function initGame() {
 }
 
 function flipCard() {
-    if (lockBoard) return;
-    if (this === firstCard) return;
+    // Permite expandir e encolher caso já esteja combinada
+    if (this.classList.contains('matched')) {
+        if (!this.classList.contains('expanded')) {
+            centerCard(this);
+        }
+        this.classList.toggle('expanded');
+        return;
+    }
 
-    this.classList.add('flipped');
+    if (lockBoard) {
+        // Permite clicar na própria tela gigante para fechar mais rápido se quiser
+        if (this.classList.contains('expanded')) {
+            this.classList.remove('expanded');
+        } else if (this === firstCard || this === secondCard) {
+            centerCard(this);
+            this.classList.add('expanded');
+        }
+        return;
+    }
+
+    // Clicar na mesma carta vira/expande novamente
+    if (this === firstCard) {
+        if (!this.classList.contains('expanded')) {
+            centerCard(this);
+        }
+        this.classList.toggle('expanded');
+        return;
+    }
+
+    centerCard(this);
+    this.classList.add('flipped', 'expanded'); // Aumenta de tamanho imediatamente para leitura
 
     if (!hasFlippedCard) {
         // Primeiro clique
@@ -84,10 +126,25 @@ function flipCard() {
     }
 
     // Segundo clique
+    firstCard.classList.remove('expanded'); // Recolhe a primeira carta para dar espaço à segunda
     secondCard = this;
     moves++;
     movesDisplay.innerText = moves;
     checkForMatch();
+}
+
+function centerCard(card) {
+    const rect = card.getBoundingClientRect();
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const cardCenterX = rect.left + rect.width / 2;
+    const cardCenterY = rect.top + rect.height / 2;
+    
+    const translateX = centerX - cardCenterX;
+    const translateY = centerY - cardCenterY;
+    
+    card.style.setProperty('--tx', `${translateX}px`);
+    card.style.setProperty('--ty', `${translateY}px`);
 }
 
 function checkForMatch() {
@@ -101,29 +158,36 @@ function checkForMatch() {
 }
 
 function disableCards() {
-    firstCard.removeEventListener('click', flipCard);
-    secondCard.removeEventListener('click', flipCard);
-    
-    firstCard.classList.add('matched');
-    secondCard.classList.add('matched');
+    lockBoard = true;
 
-    matchesCounter++;
-    resetBoard();
-    
-    // Checa se Venceu
-    if (matchesCounter === fonoData.length / 2) {
-        setTimeout(showWinScreen, 500);
-    }
+    // Fica 2s com a segunda carta gigante na tela para o jogador ler. Depois recolhe e bate o sucesso verde!
+    setTimeout(() => {
+        firstCard.classList.remove('expanded');
+        secondCard.classList.remove('expanded');
+        
+        // Adiciona a classe que inicia a animação de "Correto" pulando verde
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+
+        matchesCounter++;
+        resetBoard();
+        
+        // Checa se Venceu
+        if (matchesCounter === fonoData.length / 2) {
+            setTimeout(showWinScreen, 1500);
+        }
+    }, 2200); 
 }
 
 function unflipCards() {
     lockBoard = true;
 
+    // Fica 2s gigante lendo; se errou, ela recolhe e ambas desviram
     setTimeout(() => {
-        firstCard.classList.remove('flipped');
-        secondCard.classList.remove('flipped');
+        firstCard.classList.remove('flipped', 'expanded');
+        secondCard.classList.remove('flipped', 'expanded');
         resetBoard();
-    }, 1200); // 1.2 segundos para memorizar
+    }, 2200);
 }
 
 function resetBoard() {

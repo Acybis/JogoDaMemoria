@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jogo da Memória - Fonoaudiologia PUC</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -19,6 +19,11 @@
                 <p>Tentativas: <span id="moves">0</span></p>
                 <button id="restart-btn" class="btn">Reiniciar Jogo</button>
             </div>
+            
+            <div class="board-headers" style="display: flex; justify-content: space-between; margin-top: 30px; padding: 0 10%; color: #1e3a8a; font-weight: bold; font-size: 1.2rem;">
+                <span>Perguntas</span>
+                <span>Respostas</span>
+            </div>
         </header>
 
         <main class="game-board" id="game-board">
@@ -31,6 +36,16 @@
             <p><strong>Desenvolvido por:</strong> Aline Araujo, Fernanda Góis, Julia Carvalho, Julia Folego</p>
             <p><strong>Orientado por:</strong> Luiz Augusto de Paula Souza</p>
         </footer>
+    </div>
+
+    <!-- Modal de Regras -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #1e3a8a;">Regras - Jogo de Memória Adaptativo</h2>
+            <p style="text-align: left; margin-top: 15px;"><strong>Objetivo:</strong> Relacionar Perguntas (cartas em azul) + Respostas (cartas em amarelo)</p>
+            <p style="text-align: left; margin-top: 10px;"><strong>Público alvo:</strong> adolescentes, adultos e trabalhadores do SUS.</p>
+            <button id="start-game-btn" class="btn" style="margin-top: 25px;">Começar</button>
+        </div>
     </div>
 
     <div id="win-modal" class="modal hidden">
